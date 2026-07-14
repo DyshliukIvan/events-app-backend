@@ -1,94 +1,41 @@
 # EventApp Backend
 
-Spring Boot backend for EventApp, a mobile event discovery application. The API handles Google authentication, JWT access tokens, and event data for the Android client.
+Spring Boot REST API for the [EventApp Android client](https://github.com/DyshliukIvan/events-app-frontend). It provides authentication, JWT access/refresh tokens, secured event discovery, PostgreSQL persistence, and deterministic demo data for local development.
 
-Android frontend repository:
+## Highlights
 
-```text
-https://github.com/DyshliukIvan/events-app-frontend
-```
+- Java 17 and Spring Boot
+- Email/password and Google authentication
+- Spring Security with JWT access and refresh tokens
+- Paginated, date-sorted event API
+- PostgreSQL with Spring Data JPA
+- Idempotent demo-data seeding
+- Isolated H2 test configuration and GitHub Actions CI
 
-## Features
-
-- Google ID token verification
-- JWT access and refresh tokens
-- Email/password register and login endpoints
-- Secured event API
-- Paginated event response
-- PostgreSQL persistence with Spring Data JPA
-- Seeded demo events for local development
-- Docker Compose PostgreSQL setup
-
-## Tech Stack
-
-- Java 17
-- Spring Boot
-- Spring Security
-- Spring Data JPA
-- PostgreSQL
-- Gradle
-- Docker Compose
-
-## Run Locally
-
-Requirements:
-
-- Java 17+
-- Docker
-
-Start PostgreSQL:
-
-```powershell
-docker compose up -d
-```
-
-Run the backend:
-
-```powershell
-.\gradlew.bat bootRun
-```
-
-The API runs at:
-
-```text
-http://localhost:8080
-```
-
-## API Endpoints
+## API
 
 ```http
-POST /api/auth/google
 POST /api/auth/register
 POST /api/auth/login
+POST /api/auth/google
 POST /api/auth/refresh
 GET  /api/auth/me
 GET  /api/events
 GET  /api/events/{id}
 ```
 
-Authenticated event requests require:
+## Run locally
 
-```http
-Authorization: Bearer <accessToken>
+Requirements: JDK 17+ and Docker.
+
+```powershell
+docker compose up -d
+.\gradlew.bat bootRun
 ```
 
-## Configuration
+The API is available at `http://localhost:8080`. The project supports `SPRING_DATASOURCE_*`, `APP_JWT_*`, and `GOOGLE_WEB_CLIENT_ID` environment variables; see `.env.example`.
 
-Environment variables:
-
-```text
-SPRING_DATASOURCE_URL
-SPRING_DATASOURCE_USERNAME
-SPRING_DATASOURCE_PASSWORD
-APP_JWT_SECRET
-APP_JWT_EXPIRATION_MS
-APP_JWT_REFRESH_EXPIRATION_MS
-GOOGLE_WEB_CLIENT_ID
-```
-
-See `.env.example` for local development values.
-
-## Tests
+## Verify
 
 ```powershell
 .\gradlew.bat test

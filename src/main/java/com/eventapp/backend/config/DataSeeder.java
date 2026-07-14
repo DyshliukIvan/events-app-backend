@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Configuration
 public class DataSeeder {
@@ -14,7 +15,17 @@ public class DataSeeder {
     @Bean
     CommandLineRunner seedEvents(EventRepository eventRepository) {
         return args -> {
-            if (eventRepository.count() == 0) {
+            List<Event> existingEvents = eventRepository.findAll();
+            List<Event> eventsWithoutStatus = existingEvents.stream()
+                    .filter(event -> event.getStatus() == null || event.getStatus().isBlank())
+                    .peek(event -> event.setStatus("PUBLISHED"))
+                    .toList();
+
+            if (!eventsWithoutStatus.isEmpty()) {
+                eventRepository.saveAll(eventsWithoutStatus);
+            }
+
+            {
                 Event concert = new Event(
                         "Prague Summer Concert",
                         "Live music evening with local bands and outdoor food stands.",
@@ -27,7 +38,9 @@ public class DataSeeder {
                 concert.setCreatorName("EventApp Team");
                 concert.setRegistrationCount(124L);
                 concert.setFollowCount(260L);
-                eventRepository.save(concert);
+                if (!eventRepository.existsByTitleIgnoreCase(concert.getTitle())) {
+                    eventRepository.save(concert);
+                }
 
                 Event festival = new Event(
                         "Brno Open Air Festival",
@@ -41,7 +54,9 @@ public class DataSeeder {
                 festival.setCreatorName("Brno Events");
                 festival.setRegistrationCount(421L);
                 festival.setFollowCount(880L);
-                eventRepository.save(festival);
+                if (!eventRepository.existsByTitleIgnoreCase(festival.getTitle())) {
+                    eventRepository.save(festival);
+                }
 
                 Event conference = new Event(
                         "Ostrava Tech Conference",
@@ -55,7 +70,9 @@ public class DataSeeder {
                 conference.setCreatorName("Tech Hub Ostrava");
                 conference.setRegistrationCount(89L);
                 conference.setFollowCount(140L);
-                eventRepository.save(conference);
+                if (!eventRepository.existsByTitleIgnoreCase(conference.getTitle())) {
+                    eventRepository.save(conference);
+                }
 
                 Event jazzNight = new Event(
                         "Jazz Night Prague",
@@ -69,7 +86,9 @@ public class DataSeeder {
                 jazzNight.setCreatorName("Old Town Jazz Club");
                 jazzNight.setRegistrationCount(63L);
                 jazzNight.setFollowCount(97L);
-                eventRepository.save(jazzNight);
+                if (!eventRepository.existsByTitleIgnoreCase(jazzNight.getTitle())) {
+                    eventRepository.save(jazzNight);
+                }
             }
         };
     }

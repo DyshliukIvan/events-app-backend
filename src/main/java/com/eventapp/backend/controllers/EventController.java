@@ -6,6 +6,7 @@ import com.eventapp.backend.models.Event;
 import com.eventapp.backend.repositories.EventRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -40,7 +41,10 @@ public class EventController {
             return toResponse(filteredEvents, safePage, safeSize);
         }
 
-        Page<Event> events = eventRepository.findByStatusIgnoreCase("PUBLISHED", PageRequest.of(safePage, safeSize));
+        Page<Event> events = eventRepository.findByStatusIgnoreCase(
+                "PUBLISHED",
+                PageRequest.of(safePage, safeSize, Sort.by("startDate").ascending())
+        );
         return new EventPageResponse(
                 events.getContent().stream().map(EventDto::new).toList(),
                 events.getTotalElements(),
